@@ -78,5 +78,4 @@ public class Order implements Serializable {
     public void setDate(String date) {
         this.date = date;
     }
-
 }

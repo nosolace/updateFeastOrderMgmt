@@ -19,16 +19,16 @@ import tools.ConsoleInputter;
  */
 public class OrderList extends ArrayList<Order> {
 
-    private static int orderID, numberOfTable;
+    private static int numberOfTable;
     private static String code, mCode, date; // mã khách hàng, mã thực đơn
 
     // Thông tin khách hàng và menu, chỉ đọc
-    private final CustomerList customerList;
+    private final CustomerList customers;
     private final MenuList menuList;
 
     // Constructor 2 tham số để đọc
-    public OrderList(CustomerList customerList, MenuList menuList) {
-        this.customerList = customerList;
+    public OrderList(CustomerList customers, MenuList menuList) {
+        this.customers = customers;
         this.menuList = menuList;
     }
 
@@ -46,7 +46,7 @@ public class OrderList extends ArrayList<Order> {
         do {
             date = ConsoleInputter.getDate("Input date", "dd/MM/yyyy");
             if (date.before(new java.util.Date())) {
-                System.out.println("Must be a valid daye in the future");
+                System.out.println("Must be a valid date in the future");
             }
         } while (date.before(new java.util.Date()));
         return ConsoleInputter.dateStr(date, "dd/MM/yyyy");
@@ -76,20 +76,18 @@ public class OrderList extends ArrayList<Order> {
                 + String.format("%-16s: %,d\n", "Price", m.price)
                 + String.format("%s:\n%s", "Ingredients", m.ingredients.replace("#", "\n"));
         String totalCost = String.format("%-16s: %,d", "Total cost", m.price * o.getNumOfTables()); // Tổng tiền
-        System.out.println(seperator); // In ra ngăn cách;
-        System.out.println(header); // In ra tiêu đề
-        System.out.println(seperator); // In ra ngăn cách;
-        System.out.println(customerList.getCustomerDetail(o.getCustomerCode())); // In thông tin khách hàng
-        System.out.println(seperator); // In ra ngăn cách
-        System.out.println(orderInformation); // In ra thông tin order
-        System.out.println(seperator); // In ra ngăn cách;
-        System.out.println(totalCost); // In ra tổng tiền
-        System.out.println(seperator); // In ra ngăn cách;
+        System.out.println(seperator + "\n" + header + "\n" + seperator);
+        System.out.println(customers.getCustomerDetail(o.getCustomerCode()));
+        System.out.println(seperator);
+        System.out.println(orderInformation);
+        System.out.println(seperator);
+        System.out.println(totalCost);
+        System.out.println(seperator);
     }
 
     public void addOrder() {
-        code = customerList.inputCode();
-        if (customerList.isCustomerInList(code)) {
+        code = customers.inputCode();
+        if (customers.isCustomerInList(code)) {
             mCode = inputMenu();
             numberOfTable = inputTable();
             date = inputEventDate();
@@ -124,12 +122,9 @@ public class OrderList extends ArrayList<Order> {
         if (this.isEmpty()) {
             System.out.println("No data in the system.");
         } else {
-            // Biến ngăn các
             String seperator = "---------------------------------------------------------------------------";
-            // Biến tiêu đề
             String header = seperator + "\n" + String.format("%-4s| %-11s| %-12s| %-9s| %-9s| %-7s|%12s",
                     "ID", "Event date", "Customer ID", "Set Menu", "Price", "Tables", "Cost") + "\n" + seperator;
-            // In ra tiêu đề
             System.out.println(header);
             for (Order o : this) {
                 int price = menuList.getMenu(o.getMenuCode()).price;
@@ -138,7 +133,7 @@ public class OrderList extends ArrayList<Order> {
                         o.getOrderID(), o.getDate(), o.getCustomerCode(), o.getMenuCode(), price, o.getNumOfTables(), cost);
                 System.out.println(detail);
             }
-            System.out.println(seperator); // In ra ngăn cách
+            System.out.println(seperator);
         }
     }
 
